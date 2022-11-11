@@ -45,7 +45,7 @@ const data = [
 
 const productsContainer = document.querySelector(".products");
 const searchInput = document.querySelector(".search");
-const categoriesContainer = document.querySelector(".categories");
+const categoriesContainer = document.querySelector(".cats");
 const priceRange = document.querySelector(".priceRange");
 const priceValue = document.querySelector(".priceValue");
 
@@ -74,3 +74,43 @@ searchInput.addEventListener("keyup", (e) => {
     displayProducts(data);
   }
 });
+
+const setCategories = () => {
+  const allCats = data.map((item) => item.cat);
+  const categories = [
+    "All",
+    ...allCats.filter((item, index) => {
+      return allCats.indexOf(item) === index;
+    }),
+  ];
+  categoriesContainer.innerHTML = categories
+    .map((cat) => `<span class="cat">${cat}</span>`)
+    .join("");
+
+  categoriesContainer.addEventListener("click", (e) => {
+    const selectedCategory = e.target.textContent;
+
+    selectedCategory === "All"
+      ? displayProducts(data)
+      : displayProducts(data.filter((item) => item.cat === selectedCategory));
+  });
+};
+
+const setPrices = () => {
+  const priceList = data.map((item) => item.price);
+  const maxPrice = Math.max(...priceList);
+  const minPrice = Math.min(...priceList);
+
+  priceRange.max = maxPrice;
+  priceRange.min = minPrice;
+  priceRange.value = maxPrice;
+  priceValue.textContent = "$" + maxPrice;
+
+  priceRange.addEventListener("input", (e) => {
+    priceValue.textContent = "$" + e.target.value;
+    displayProducts(data.filter((item) => item.price <= e.target.value));
+  });
+};
+
+setCategories();
+setPrices();
